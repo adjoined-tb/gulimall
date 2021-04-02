@@ -4,10 +4,6 @@ spring:
     password: root
     url: jdbc:mysql://127.0.0.1:3306/gulimall_sms
     driver-class-name: com.mysql.jdbc.Driver
-  cloud:
-    nacos:
-      discovery:
-        server-addr: 127.0.0.1:8848
   application:
     name: gulimall-coupon
 
@@ -19,3 +15,8 @@ mybatis-plus:
 
 server:
   port: 7000
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/

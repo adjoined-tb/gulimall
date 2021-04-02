@@ -5,8 +5,14 @@ spring:
       - id: test_route
         uri: lb://gulimall-product
         predicates:
-        - Query=url,baidu
+        - Path=/api/product/**
+        filters:
+        - RewritePath=/api/(?<segment>.*),/$\{segment}
       - id: qq_route
         uri: https://www.qq.com
         predicates:
         - Query=url,qq
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/

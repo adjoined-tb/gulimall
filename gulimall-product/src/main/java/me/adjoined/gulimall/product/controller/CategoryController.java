@@ -30,6 +30,10 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
+    @RequestMapping("/test")
+    public R test() {
+        return R.ok().put("test", "pass");
+    }
     /**
      * 列表
      */
