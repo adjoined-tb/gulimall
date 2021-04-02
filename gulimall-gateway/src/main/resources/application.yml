@@ -3,7 +3,7 @@ spring:
     gateway:
       routes:
       - id: test_route
-        uri: https://www.baidu.com
+        uri: lb://gulimall-product
         predicates:
         - Query=url,baidu
       - id: qq_route
