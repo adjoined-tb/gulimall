@@ -20,6 +20,7 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.comparator.JSONCompareUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
@@ -28,6 +29,7 @@ import java.util.Map;
 @SpringBootTest
 class GulimallSearchApplicationTests {
 
+    @Qualifier("esRestClient")
     @Autowired
     private RestHighLevelClient esClient;
     @Test
@@ -74,8 +76,28 @@ class GulimallSearchApplicationTests {
         System.out.println(res);
 //        new Gson().fromJson(res.toString(), Map.class);
         for (SearchHit hit : res.getHits().getHits()) {
-            hit.getSourceAsString()
+//            hit.getSourceAsString()
+            Account account = new Gson().fromJson(hit.getSourceAsString(), Account.class);
+            System.out.println("account: " + account.toString());
         }
+    }
+
+    @ToString
+    @Data
+    class Account {
+
+        private int account_number;
+        private int balance;
+        private String firstname;
+        private String lastname;
+        private int age;
+        private String gender;
+        private String address;
+        private String employer;
+        private String email;
+        private String city;
+        private String state;
+
     }
 
 
