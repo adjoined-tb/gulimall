@@ -1,14 +1,12 @@
 package me.adjoined.gulimall.order.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.web.bind.annotation.*;
 
 import me.adjoined.gulimall.order.entity.OrderEntity;
 import me.adjoined.gulimall.order.service.OrderService;
@@ -40,6 +38,19 @@ public class OrderController {
         return R.ok().put("page", page);
     }
 
+    @RequestMapping("/cache")
+    @ResponseBody
+    public Map<String, List<String>> cache() {
+        Map<String, List<String>> result = orderService.getOrder();
+        return result;
+    }
+
+    @RequestMapping("/evict")
+    @ResponseBody
+    public String evict() {
+        orderService.removeOrder();
+        return "evicted";
+    }
 
     /**
      * 信息

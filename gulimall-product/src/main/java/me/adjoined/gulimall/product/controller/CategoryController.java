@@ -22,7 +22,6 @@ import me.adjoined.common.utils.PageUtils;
 import me.adjoined.common.utils.R;
 
 
-
 /**
  * ÉÌÆ·Èý¼¶·ÖÀà
  *
@@ -197,10 +196,6 @@ public class CategoryController {
         park.release();
         return "leaved";
     }
-
-
-
-
 
     @RequestMapping("/test")
     public R test() {
