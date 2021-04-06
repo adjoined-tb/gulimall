@@ -21,6 +21,8 @@ import me.adjoined.gulimall.product.service.CategoryService;
 import me.adjoined.common.utils.PageUtils;
 import me.adjoined.common.utils.R;
 
+import javax.servlet.http.HttpSession;
+
 
 /**
  * ÉÌÆ·Èý¼¶·ÖÀà
@@ -41,6 +43,12 @@ public class CategoryController {
 
     @Autowired
     private RedissonClient redissonClient;
+
+    @RequestMapping("/session")
+    @ResponseBody
+    public String session(HttpSession session) {
+        return (String) session.getAttribute("loginUser");
+    }
 
     //http://adjoined.me/api/product/category/redis/son
     @RequestMapping("/redis/son")
