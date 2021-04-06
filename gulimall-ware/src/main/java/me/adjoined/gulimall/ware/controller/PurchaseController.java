@@ -2,13 +2,12 @@ package me.adjoined.gulimall.ware.controller;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import me.adjoined.gulimall.ware.entity.PurchaseEntity;
 import me.adjoined.gulimall.ware.service.PurchaseService;
@@ -29,7 +28,36 @@ import me.adjoined.common.utils.R;
 public class PurchaseController {
     @Autowired
     private PurchaseService purchaseService;
+    @Autowired
+    private ThreadPoolExecutor threadPoolExecutor;
 
+    @RequestMapping("/future")
+    @ResponseBody
+    public String future() throws ExecutionException, InterruptedException {
+        CompletableFuture<String> infoFuture = CompletableFuture.supplyAsync(() -> {
+            System.out.println("info");
+            return "info";
+        }, threadPoolExecutor);
+
+        CompletableFuture<Void> saleFuture = infoFuture.thenAcceptAsync((v) -> {
+            System.out.println("sale");
+        }, threadPoolExecutor);
+
+        CompletableFuture<Void> spuFuture = infoFuture.thenAcceptAsync(v -> {
+            System.out.println("spu");
+        }, threadPoolExecutor);
+
+        CompletableFuture<Void> attrFuture = infoFuture.thenAcceptAsync(v -> {
+            System.out.println("attr");
+        }, threadPoolExecutor);
+
+        CompletableFuture<Void> imagesFuture = CompletableFuture.runAsync(() -> {
+            System.out.println("images");
+        }, threadPoolExecutor);
+
+        CompletableFuture.allOf(saleFuture, spuFuture, attrFuture, imagesFuture).get();
+        return "ok";
+    }
     /**
      * 列表
      */
