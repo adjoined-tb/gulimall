@@ -1,4 +1,4 @@
-package me.adjoined.gulimall.auth;
+package me.adjoined.gulimall.cart;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -7,10 +7,10 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 
 @EnableDiscoveryClient
 @SpringBootApplication
-public class GulimallAuthServerApplication {
+public class GulimallCartApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(GulimallAuthServerApplication.class, args);
+        SpringApplication.run(GulimallCartApplication.class, args);
     }
 
 }

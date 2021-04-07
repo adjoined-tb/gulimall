@@ -1,5 +1,6 @@
 package me.adjoined.gulimall.auth.controller;
 
+import me.adjoined.common.constant.AuthServerConstant;
 import me.adjoined.common.utils.R;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -18,7 +19,7 @@ public class AuthController {
     @RequestMapping("/login")
     @ResponseBody
     public String login(HttpSession session) {
-        session.setAttribute("loginUser", "tianbian");
+        session.setAttribute(AuthServerConstant.LOGIN_USER, "tianbian");
         return "logged in.";
     }
 }
