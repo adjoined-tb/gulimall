@@ -1,7 +1,9 @@
 package me.adjoined.gulimall.order.service.impl;
 
 import com.google.common.collect.ImmutableList;
+import me.adjoined.common.utils.R;
 import me.adjoined.gulimall.order.feign.CartFeignService;
+import me.adjoined.gulimall.order.feign.CouponFeignService;
 import me.adjoined.gulimall.order.vo.CartItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -12,6 +14,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -22,12 +27,20 @@ import me.adjoined.common.utils.Query;
 import me.adjoined.gulimall.order.dao.OrderDao;
 import me.adjoined.gulimall.order.entity.OrderEntity;
 import me.adjoined.gulimall.order.service.OrderService;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
 
 @Service("orderService")
 public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> implements OrderService {
     @Autowired
     CartFeignService cartFeignService;
+
+    @Autowired
+    CouponFeignService couponFeignService;
+
+    @Autowired
+    ThreadPoolExecutor executor;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -57,14 +70,26 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
 
     @Override
-    public String confirmOrder() {
+    public String confirmOrder() throws ExecutionException, InterruptedException {
+        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
 
-        List<CartItem> items = cartFeignService.getCurrentUserCartItems();
-        if (items != null) {
-            System.out.println("items: " + items.toString());
-        }
+        CompletableFuture<Void> couponFuture = CompletableFuture.runAsync(() -> {
+            RequestContextHolder.setRequestAttributes(requestAttributes);
+            R memberCoupons = couponFeignService.membercoupons();
+            if (memberCoupons != null) {
+                System.out.println("coupon info: " + memberCoupons.toString());
+            }
+        }, executor);
+
+        CompletableFuture<Void> cartFuture = CompletableFuture.runAsync(() -> {
+            RequestContextHolder.setRequestAttributes(requestAttributes);
+            List<CartItem> items = cartFeignService.getCurrentUserCartItems();
+            if (items != null) {
+                System.out.println("items: " + items.toString());
+            }
+        }, executor);
+
+        CompletableFuture.allOf(couponFuture, cartFuture).get();
         return "order confirmed";
     }
-
-
 }

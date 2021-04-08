@@ -6,6 +6,7 @@ import me.adjoined.gulimall.order.entity.OrderEntity;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /**
  * ¶©µ¥
@@ -19,6 +20,6 @@ public interface OrderService extends IService<OrderEntity> {
     PageUtils queryPage(Map<String, Object> params);
     Map<String, List<String>> getOrder();
     void removeOrder();
-    String confirmOrder();
+    String confirmOrder() throws ExecutionException, InterruptedException;
 }
 

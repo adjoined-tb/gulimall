@@ -20,8 +20,10 @@ public class GuliFeignConfig {
             public void apply(RequestTemplate requestTemplate) {
                 ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
                 HttpServletRequest request = requestAttributes.getRequest();
-                String cookie = request.getHeader("Cookie");
-                requestTemplate.header("Cookie", cookie);
+                if (request != null) {
+                    String cookie = request.getHeader("Cookie");
+                    requestTemplate.header("Cookie", cookie);
+                }
                 System.out.println("intercepting....");
             }
         };
