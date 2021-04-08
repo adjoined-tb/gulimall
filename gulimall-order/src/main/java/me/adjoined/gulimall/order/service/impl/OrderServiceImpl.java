@@ -2,21 +2,24 @@ package me.adjoined.gulimall.order.service.impl;
 
 import com.google.common.collect.ImmutableList;
 import me.adjoined.common.utils.R;
+import me.adjoined.gulimall.order.constant.OrderConstant;
 import me.adjoined.gulimall.order.feign.CartFeignService;
 import me.adjoined.gulimall.order.feign.CouponFeignService;
+import me.adjoined.gulimall.order.interceptor.LoginUserInterceptor;
 import me.adjoined.gulimall.order.vo.CartItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -41,6 +44,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
     @Autowired
     ThreadPoolExecutor executor;
+
+    @Autowired
+    StringRedisTemplate redisTemplate;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -70,9 +76,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
 
     @Override
-    public String confirmOrder() throws ExecutionException, InterruptedException {
+    public String prepareOrder() throws ExecutionException, InterruptedException {
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-
+        String user = LoginUserInterceptor.loginUser.get();
         CompletableFuture<Void> couponFuture = CompletableFuture.runAsync(() -> {
             RequestContextHolder.setRequestAttributes(requestAttributes);
             R memberCoupons = couponFeignService.membercoupons();
@@ -88,8 +94,35 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                 System.out.println("items: " + items.toString());
             }
         }, executor);
+        String token = UUID.randomUUID().toString();
+        String key = OrderConstant.USER_ORDER_TOKEN_PREFIX+user;
+        redisTemplate.opsForValue().set(key, token, 30, TimeUnit.MINUTES);
 
         CompletableFuture.allOf(couponFuture, cartFuture).get();
-        return "order confirmed";
+        return token;
     }
+
+    @Override
+    public boolean placeOrder(String orderToken) {
+        String user = LoginUserInterceptor.loginUser.get();
+        // check token
+        String key = OrderConstant.USER_ORDER_TOKEN_PREFIX+user;
+        String lua = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
+//        String redisToken = redisTemplate.opsForValue().get(key);
+//        if (orderToken != null && orderToken.equals(redisToken)) { delete
+        Long result = redisTemplate.execute(new DefaultRedisScript<Long>(lua, Long.class), Arrays.asList(key), orderToken);
+        if (result == 0L) {
+            return false;
+        }
+
+        System.out.println("pass!");
+        // order db
+
+        // warehouse db
+
+
+        return true;
+    }
+
+
 }

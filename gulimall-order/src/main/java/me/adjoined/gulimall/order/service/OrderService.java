@@ -20,6 +20,7 @@ public interface OrderService extends IService<OrderEntity> {
     PageUtils queryPage(Map<String, Object> params);
     Map<String, List<String>> getOrder();
     void removeOrder();
-    String confirmOrder() throws ExecutionException, InterruptedException;
+    String prepareOrder() throws ExecutionException, InterruptedException;
+    boolean placeOrder(String orderToken);
 }
 
