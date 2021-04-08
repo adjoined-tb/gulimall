@@ -3,12 +3,9 @@ package me.adjoined.gulimall.ware.controller;
 import java.util.Arrays;
 import java.util.Map;
 
+import me.adjoined.common.exception.NoStockException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import me.adjoined.gulimall.ware.entity.WareSkuEntity;
 import me.adjoined.gulimall.ware.service.WareSkuService;
@@ -30,6 +27,16 @@ public class WareSkuController {
     @Autowired
     private WareSkuService wareSkuService;
 
+    @PostMapping("/lock/order")
+    public R orderLockStock() {
+        try {
+            wareSkuService.orderLockStock();
+        } catch (NoStockException e) {
+            e.printStackTrace();
+            return R.error("cannot lock ware: skuId: " + e.getSkuId());
+        }
+        return R.ok();
+    }
     /**
      * 列表
      */

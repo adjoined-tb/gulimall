@@ -17,12 +17,14 @@ public class OrderWebController {
     @GetMapping("/place")
     public String place(@RequestParam(value="token", defaultValue = "") String token, Model model) throws ExecutionException, InterruptedException {
         System.out.println(token);
-        boolean placed = orderService.placeOrder(token);
-        if (placed) {
-            return "placed";
-        } else {
+
+        try {
+            orderService.placeOrder(token);
+        } catch (Exception e) {
+            e.printStackTrace();
             return "aiyowei";
         }
+        return "placed";
     }
 
     @GetMapping("/prepare")

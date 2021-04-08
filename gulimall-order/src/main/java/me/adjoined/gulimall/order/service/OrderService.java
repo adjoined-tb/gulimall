@@ -21,6 +21,6 @@ public interface OrderService extends IService<OrderEntity> {
     Map<String, List<String>> getOrder();
     void removeOrder();
     String prepareOrder() throws ExecutionException, InterruptedException;
-    boolean placeOrder(String orderToken);
+    void placeOrder(String orderToken);
 }
 
