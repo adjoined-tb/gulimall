@@ -2,10 +2,10 @@ package me.adjoined.gulimall.cart.service.impl;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
-import com.netflix.discovery.converters.Auto;
 import lombok.extern.slf4j.Slf4j;
 import me.adjoined.gulimall.cart.interceptor.CartInterceptor;
 import me.adjoined.gulimall.cart.service.CartService;
+import me.adjoined.gulimall.cart.vo.Cart;
 import me.adjoined.gulimall.cart.vo.CartItem;
 import me.adjoined.gulimall.cart.vo.UserInfoTo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +14,11 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -52,6 +54,22 @@ public class CartServiceImpl implements CartService {
         ops.put(skuId.toString(),gson.toJson(cartItem));
         return cartItem;
     }
+
+    @Override
+    public Cart getCart() {
+        Cart cart = new Cart();
+        BoundHashOperations<String, Object, Object> ops = getCartOps();
+        List<Object> values = ops.values();
+        if (values != null) {
+            List<CartItem> items = values.stream().map(obj -> {
+                CartItem cartItem  = new Gson().fromJson((String) obj, CartItem.class);
+                return cartItem;
+            }).collect(Collectors.toList());
+            cart.setItems(items);
+        }
+        return cart;
+    }
+
 
     private BoundHashOperations<String, Object, Object> getCartOps() {
         UserInfoTo userInfoTo = CartInterceptor.threadLocal.get();

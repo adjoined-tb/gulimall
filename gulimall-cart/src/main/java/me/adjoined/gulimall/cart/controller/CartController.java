@@ -5,29 +5,25 @@ import me.adjoined.gulimall.cart.service.CartService;
 import me.adjoined.gulimall.cart.vo.CartItem;
 import me.adjoined.gulimall.cart.vo.UserInfoTo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 
-import javax.servlet.http.HttpSession;
-import java.util.concurrent.ExecutionException;
-
-@Controller
+@RestController
 public class CartController {
     @Autowired
     CartService cartService;
 
-    @GetMapping("/cart.html")
-    public String list(HttpSession session) {
+    @GetMapping("/currentUserCartItems")
+    @ResponseBody
+    public List<CartItem> getCurrentUserCartItems() {
         UserInfoTo userInfoTo = CartInterceptor.threadLocal.get();
-        System.out.println(userInfoTo);
-        return "cartList";
-    }
-
-    @GetMapping("/addToCart")
-    public String addToCart() throws ExecutionException, InterruptedException {
-        CartItem cartItem = cartService.addToCart(123L, 10);
-        return "success";
+        if (userInfoTo.getUserId() == null) {
+            return null;
+        } else {
+            return cartService.getCart().getItems();
+        }
     }
 }

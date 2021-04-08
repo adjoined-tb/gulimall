@@ -2,7 +2,6 @@ package me.adjoined.gulimall.cart.interceptor;
 
 import me.adjoined.common.constant.AuthServerConstant;
 import me.adjoined.gulimall.cart.constant.CartConstant;
-import me.adjoined.gulimall.cart.vo.Cart;
 import me.adjoined.gulimall.cart.vo.UserInfoTo;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
