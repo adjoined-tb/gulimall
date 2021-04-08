@@ -1,6 +1,9 @@
 package me.adjoined.gulimall.order.service.impl;
 
 import com.google.common.collect.ImmutableList;
+import me.adjoined.gulimall.order.feign.CartFeignService;
+import me.adjoined.gulimall.order.vo.CartItem;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -23,6 +26,8 @@ import me.adjoined.gulimall.order.service.OrderService;
 
 @Service("orderService")
 public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> implements OrderService {
+    @Autowired
+    CartFeignService cartFeignService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -48,6 +53,17 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     @Override
     public void removeOrder() {
         System.out.println("remove ...");
+    }
+
+
+    @Override
+    public String confirmOrder() {
+
+        List<CartItem> items = cartFeignService.getCurrentUserCartItems();
+        if (items != null) {
+            System.out.println("items: " + items.toString());
+        }
+        return "order confirmed";
     }
 
 

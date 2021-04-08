@@ -43,8 +43,8 @@ public class OrderItemServiceImpl extends ServiceImpl<OrderItemDao, OrderItemEnt
         Thread.sleep(3000);
         System.out.println("content: " + content);
         try {
-//            channel.basicAck(properties.getDeliveryTag(), false);
-            channel.basicNack(properties.getDeliveryTag(), false, true);
+            channel.basicAck(properties.getDeliveryTag(), false);
+//            channel.basicNack(properties.getDeliveryTag(), false, true);
 //            channel.basicReject(properties.getDeliveryTag(), true);
         } catch (IOException e) {
             // network issue
