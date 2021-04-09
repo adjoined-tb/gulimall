@@ -22,6 +22,12 @@ spring:
         uri: lb://gulimall-ware
         predicates:
           - Host=ware.adjoined.me
+      - id: gulimall_seckill_route
+        uri: lb://gulimall-seckill
+        predicates:
+          - Host=seckill.adjoined.me
+
+
 
 #- id: test_route
       ##        uri: lb://gulimall-product
