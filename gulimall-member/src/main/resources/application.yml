@@ -14,7 +14,7 @@ mybatis-plus:
       id-type: auto
 
 server:
-  port: 8000
+  port: 13000
 
 eureka:
   client:
