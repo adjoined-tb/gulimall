@@ -71,11 +71,14 @@ public class CategoryController {
         RReadWriteLock readWriteLock = redissonClient.getReadWriteLock("catalog-rw");
         RLock rLock = readWriteLock.writeLock();
         rLock.lock();
-        logger.info("updating db");
-        Thread.sleep(10000);
-        stringRedisTemplate.delete("catalogJSON");
-        logger.info("db updated");
-        rLock.unlock();
+        try {
+            logger.info("updating db");
+            Thread.sleep(10000);
+            stringRedisTemplate.delete("catalogJSON");
+            logger.info("db updated");
+        } finally {
+            rLock.unlock();
+        }
         return "ok";
     }
     //http://adjoined.me/api/product/category/redis/getCatalog
