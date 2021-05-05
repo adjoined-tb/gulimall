@@ -23,6 +23,8 @@
         <module>gulimall-auth-server</module>
         <module>gulimall-cart</module>
         <module>gulimall-seckill</module>
+        <module>playground</module>
+        <module>leetcode</module>
     </modules>
 
 </project>

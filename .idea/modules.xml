@@ -16,6 +16,8 @@
       <module fileurl="file://$PROJECT_DIR$/gulimall-search/gulimall-search.iml" filepath="$PROJECT_DIR$/gulimall-search/gulimall-search.iml" />
       <module fileurl="file://$PROJECT_DIR$/gulimall-seckill/gulimall-seckill.iml" filepath="$PROJECT_DIR$/gulimall-seckill/gulimall-seckill.iml" />
       <module fileurl="file://$PROJECT_DIR$/gulimall-ware/gulimall-ware.iml" filepath="$PROJECT_DIR$/gulimall-ware/gulimall-ware.iml" />
+      <module fileurl="file://$PROJECT_DIR$/leetcode/leetcode.iml" filepath="$PROJECT_DIR$/leetcode/leetcode.iml" />
+      <module fileurl="file://$PROJECT_DIR$/playground/playground.iml" filepath="$PROJECT_DIR$/playground/playground.iml" />
       <module fileurl="file://$PROJECT_DIR$/renren-generator/renren-generator.iml" filepath="$PROJECT_DIR$/renren-generator/renren-generator.iml" />
     </modules>
   </component>
