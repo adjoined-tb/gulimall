@@ -123,7 +123,7 @@ public class OptionalTest {
     }
 
     public static Person getOldestPerson(List<Person> people) {
-        return people.stream().max(Comparator.comparing(Person::getAge)).get();
+        return people.stream().max(Comparator.comparing(Person::getAge)).orElse(new Person("emma2", 7, "China"));
     }
 
     public static int calculate(List<Integer> numbers) {
